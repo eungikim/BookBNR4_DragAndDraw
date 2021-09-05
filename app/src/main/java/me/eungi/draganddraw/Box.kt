@@ -1,9 +1,11 @@
 package me.eungi.draganddraw
 
 import android.graphics.PointF
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-class Box(val start: PointF) {
-    var end: PointF = start
+@Parcelize
+class Box(private val start: PointF, var end: PointF = start) : Parcelable {
 
     val left: Float
         get() = Math.min(start.x, end.x)

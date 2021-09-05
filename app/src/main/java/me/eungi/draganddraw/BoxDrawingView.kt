@@ -4,12 +4,16 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 
 private const val TAG = "BoxDrawingView"
+private const val KEY_VIEW = "KEY_VIEW"
+private const val KEY_BOX_LIST = "KEY_BOX_LIST"
 
 class BoxDrawingView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
 
@@ -35,7 +39,7 @@ class BoxDrawingView(context: Context, attrs: AttributeSet? = null) : View(conte
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event ?: return super.onTouchEvent(event)
         val current = PointF(event.x, event.y)
-        var action = ""
+        val action: String
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 action = "ACTION_DOWN"
@@ -61,6 +65,20 @@ class BoxDrawingView(context: Context, attrs: AttributeSet? = null) : View(conte
         }
         Log.i(TAG, "$action at x=${current.x}, y=${current.y}")
         return true
+    }
+
+    override fun onSaveInstanceState(): Parcelable = Bundle().apply {
+        putParcelable(KEY_VIEW, super.onSaveInstanceState())
+        putParcelableArray(KEY_BOX_LIST, boxen.toTypedArray())
+    }
+
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val bundle: Bundle = state as? Bundle ?: return super.onRestoreInstanceState(state)
+        super.onRestoreInstanceState(bundle.getParcelable(KEY_VIEW))
+        bundle.getParcelableArray(KEY_BOX_LIST)?.forEach {
+            boxen.add(it as Box)
+        }
     }
 
 
